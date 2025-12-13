@@ -1,0 +1,10 @@
+---
+server_essentials_packages:
+  - vim
+  - ncdu
+  - fd-find
+  - ripgrep
+  - speedtest-cli
+  - dnsutils # dig
+  - curl
+  - inxi

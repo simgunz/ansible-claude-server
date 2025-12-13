@@ -1,0 +1,92 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+display_usage() {
+    cat <<EOF
+Usage: $0 TARGET [OPTIONS] [ansible-playbook options]
+
+Run ansible-playbook for the specified target. The playbook is inferred from the target:
+  - playbooks/TARGET.yaml if it exists
+  - playbooks/TARGET.yml if it exists
+  - playbook.yml as fallback
+
+Set ANSIBLE_BECOME_PASS to avoid setting the become password.
+
+Positional arguments:
+  TARGET           Target host or group from inventory.yml
+
+Options:
+  -u, --user       Run without become password.
+  -h, --help       Display this help and exit.
+
+Examples:
+  $0 greenfly
+  $0 greenfly -u
+  $0 greenfly --tags docker
+EOF
+    exit 1
+}
+
+ANSIBLE_DIR="$(dirname "$0")"
+BECOME_FLAG="--ask-become-pass"
+
+# Check if ANSIBLE_BECOME_PASS is set
+if [[ -n "${ANSIBLE_BECOME_PASS:-}" ]]; then
+    BECOME_FLAG=""
+fi
+
+# Parse all arguments
+declare -a args=()
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -u | --user)
+            BECOME_FLAG=""
+            shift
+            ;;
+        -h | --help)
+            display_usage
+            ;;
+        *)
+            args+=("$1")
+            shift
+            ;;
+    esac
+done
+
+# Get target from saved args
+target="${args[0]:-}"
+
+# Remove first argument and keep the rest for ansible-playbook
+unset 'args[0]' 2>/dev/null || true
+set -- "${args[@]}"
+
+# Validate target
+if [[ -z $target ]]; then
+    display_usage
+fi
+
+# Validate target exists in inventory
+if ! grep -q "${target}" "${ANSIBLE_DIR}/inventory.yml"; then
+    echo "Error: Target '${target}' not found in inventory.yml"
+    exit 1
+fi
+
+# Infer playbook from target
+if [[ -f "${ANSIBLE_DIR}/playbooks/${target}.yaml" ]]; then
+    playbook="playbooks/${target}.yaml"
+elif [[ -f "${ANSIBLE_DIR}/playbooks/${target}.yml" ]]; then
+    playbook="playbooks/${target}.yml"
+else
+    playbook="playbook.yml"
+fi
+
+echo "Using playbook: ${playbook}"
+
+# Validate playbook file exists
+if [[ ! -f "${ANSIBLE_DIR}/${playbook}" ]]; then
+    echo "Error: Playbook '${playbook}' not found"
+    exit 1
+fi
+
+# Run ansible-playbook command
+ansible-playbook $BECOME_FLAG -i "${ANSIBLE_DIR}/inventory.yml" -l "${target}" --diff "$@" "${playbook}"

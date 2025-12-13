@@ -1,0 +1,11 @@
+---
+- name: Installing essential packages
+  ansible.builtin.package:
+    name: "{{ server_essentials_packages }}"
+    state: present
+    update_cache: true
+    cache_valid_time: 86400
+  vars:
+    packages:
+  become: true
+  tags: server_essentials
