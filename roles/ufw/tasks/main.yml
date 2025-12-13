@@ -1,0 +1,51 @@
+---
+- name: WARNING - Confirm WireGuard is working before proceeding
+  ansible.builtin.pause:
+    prompt: |
+
+      ⚠️  WARNING: This will block SSH access from the public internet!
+
+      SSH will ONLY be accessible via WireGuard VPN ({{ ufw_ssh_allowed_subnet }})
+
+      Before continuing, ensure:
+      1. WireGuard VPN is set up and working
+      2. You can SSH to {{ ufw_ssh_host_ip }} over the VPN
+      3. You have tested VPN connectivity
+
+      Press ENTER to continue or Ctrl+C to abort
+  tags: ufw
+
+- name: Install ufw
+  ansible.builtin.package:
+    name: ufw
+    state: present
+  tags: ufw
+
+- name: Configure UFW default policies
+  community.general.ufw:
+    direction: "{{ item.direction }}"
+    policy: "{{ item.policy }}"
+  loop:
+    - { direction: incoming, policy: deny }
+    - { direction: outgoing, policy: allow }
+  tags: ufw
+
+- name: Allow SSH only from Docker bridge network (WireGuard clients)
+  community.general.ufw:
+    rule: allow
+    port: '22'
+    proto: tcp
+    from_ip: "{{ ufw_ssh_allowed_subnet }}"
+  tags: ufw
+
+- name: Allow WireGuard port
+  community.general.ufw:
+    rule: allow
+    port: "{{ ufw_wireguard_port }}"
+    proto: udp
+  tags: ufw
+
+- name: Enable UFW
+  community.general.ufw:
+    state: enabled
+  tags: ufw

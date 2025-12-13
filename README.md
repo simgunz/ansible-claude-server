@@ -136,16 +136,22 @@ The WireGuard setup uses **split tunneling** with specific AllowedIPs to avoid r
 
 ### Securing SSH Access
 
-Once WireGuard is working, you can block SSH access from the public internet and only allow it through the VPN:
+Once WireGuard is working and you've verified SSH access over the VPN, run the UFW role to restrict SSH to VPN-only:
 
 ```bash
-# Block SSH from public internet
-sudo ufw delete allow 22/tcp
-# Allow SSH only from Docker bridge network (WireGuard clients)
-sudo ufw allow from 10.43.43.0/24 to any port 22
+ export ANSIBLE_BECOME_PASS=mypassword  # Add leading space to not store in history
+./install greenfly --tags ufw
 ```
 
-This way, SSH is only accessible via the WireGuard VPN, while the WireGuard port (51820/udp) remains open to the internet.
+**⚠️ WARNING:** This will block SSH access from the public internet! Only proceed after confirming:
+1. WireGuard VPN is working
+2. You can SSH to `10.43.43.1` over the VPN
+3. You have tested VPN connectivity
+
+The UFW role will:
+- Allow WireGuard port (51820/udp) from the internet
+- Allow SSH (22/tcp) only from the Docker bridge network (WireGuard clients)
+- Deny all other incoming traffic
 
 ### Full provisioning
 
