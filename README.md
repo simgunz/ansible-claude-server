@@ -58,9 +58,11 @@ ssh -N -L 51821:localhost:51821 simone@<server-ip>
 
 6. Create a new WireGuard client in the web interface
 
-7. Download the configuration file or scan QR code
+7. **Configure Allowed IPs** (for wg-easy 15.1): Add `10.43.43.1/32` to Allowed IPs in **Administrator > Admin Panel > Config** to enable SSH access over VPN (INIT_ALLOWED_IPS only supported from 15.2+)
 
-8. Import the configuration into your WireGuard client
+8. Download the configuration file or scan QR code
+
+9. Import the configuration into your WireGuard client
 
 ## WireGuard Network Architecture
 
