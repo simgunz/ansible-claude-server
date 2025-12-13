@@ -64,6 +64,34 @@ ssh -N -L 51821:localhost:51821 simone@<server-ip>
 
 9. Import the configuration into your WireGuard client
 
+### Secure SSH access
+
+Once you've verified SSH access over the VPN, restrict SSH to VPN-only:
+
+```bash
+ export ANSIBLE_BECOME_PASS=mypassword  # Add leading space to not store in history
+./install greenfly --tags ufw
+```
+
+**⚠️ WARNING:** This will block SSH access from the public internet! Only proceed after confirming:
+1. WireGuard VPN is working
+2. You can SSH to `10.43.43.1` over the VPN
+3. You have tested VPN connectivity
+
+The UFW role will:
+- Allow WireGuard port (51820/udp) from the internet
+- Allow SSH (22/tcp) only from the Docker bridge network (WireGuard clients)
+- Deny all other incoming traffic
+
+### Deploy remaining roles
+
+After securing SSH, deploy any remaining roles in the playbook:
+
+```bash
+ export ANSIBLE_BECOME_PASS=mypassword  # Add leading space to not store in history
+./install greenfly
+```
+
 ## WireGuard Network Architecture
 
 ### Understanding the Network Layout
@@ -133,32 +161,4 @@ The WireGuard setup uses **split tunneling** with specific AllowedIPs to avoid r
 - DNS server IPs (e.g., AdGuard DNS) - Required for Android Private DNS to work before VPN is fully established
 
 **Note for wg-easy 15.1 users:** The `INIT_ALLOWED_IPS` variable in `.env` is not yet supported in version 15.1 (will be supported from 15.2+). You must manually configure the AllowedIPs in the wg-easy web UI when creating or editing clients.
-
-### Securing SSH Access
-
-Once WireGuard is working and you've verified SSH access over the VPN, run the UFW role to restrict SSH to VPN-only:
-
-```bash
- export ANSIBLE_BECOME_PASS=mypassword  # Add leading space to not store in history
-./install greenfly --tags ufw
-```
-
-**⚠️ WARNING:** This will block SSH access from the public internet! Only proceed after confirming:
-1. WireGuard VPN is working
-2. You can SSH to `10.43.43.1` over the VPN
-3. You have tested VPN connectivity
-
-The UFW role will:
-- Allow WireGuard port (51820/udp) from the internet
-- Allow SSH (22/tcp) only from the Docker bridge network (WireGuard clients)
-- Deny all other incoming traffic
-
-### Full provisioning
-
-To run all roles:
-
-```bash
- export ANSIBLE_BECOME_PASS=mypassword  # Add leading space to not store in history
-./install greenfly
-```
 
