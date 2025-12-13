@@ -13,3 +13,4 @@ wg_easy_allowed_ips_extra: ""
 # Docker bridge network for WireGuard container
 wg_easy_bridge_ip: "10.42.42.42"
 wg_easy_bridge_subnet: "10.42.42.0/24"
+wg_easy_bridge_host_ip: "10.42.42.1"

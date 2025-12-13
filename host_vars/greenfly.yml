@@ -2,6 +2,7 @@
 # Docker bridge network for WireGuard container
 wg_easy_bridge_ip: "10.43.43.43"
 wg_easy_bridge_subnet: "10.43.43.0/24"
+wg_easy_bridge_host_ip: "10.43.43.1"
 
 # AdGuard DNS IPs (unfiltered)
 adguard_dns_ipv4_primary: "94.140.14.14"
