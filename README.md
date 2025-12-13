@@ -62,6 +62,89 @@ ssh -N -L 51821:localhost:51821 simone@<server-ip>
 
 8. Import the configuration into your WireGuard client
 
+## WireGuard Network Architecture
+
+### Understanding the Network Layout
+
+The WireGuard setup uses Docker with a custom bridge network, creating three distinct network layers:
+
+1. **VPN Client Network** (`10.10.0.0/24`): WireGuard clients get IPs from this range
+   - WireGuard gateway inside container: `10.10.0.1`
+
+2. **Docker Bridge Network** (`10.43.43.0/24` for greenfly, configurable via `wg_easy_bridge_subnet`):
+   - Host's bridge gateway IP: `10.43.43.1` (automatically assigned by Docker)
+   - Container IP: `10.43.43.43` (configured via `wg_easy_bridge_ip`)
+
+3. **Public Internet**: Server's public IP (e.g., `138.199.192.136`)
+
+```mermaid
+graph LR
+    Client["WireGuard Client<br/>10.10.0.2"]
+
+    subgraph Host["Host Server (138.199.192.136)"]
+        subgraph Container["wg-easy Container"]
+            WG["WireGuard<br/>10.10.0.1"]
+        end
+        Bridge["Docker Bridge<br/>10.43.43.1 (host)<br/>10.43.43.43 (container)"]
+        SSH["SSH Server<br/>10.43.43.1:22"]
+    end
+
+    Client <--"Tunnel :51820/udp"--> WG
+    WG <--> Bridge
+    Bridge <--> SSH
+
+    style Client fill:#e1f5ff
+    style Container fill:#fff4e1
+    style SSH fill:#d4edda
+```
+
+**Network flow for SSH over WireGuard:**
+1. Client (10.10.0.2) sends SSH traffic to 10.43.43.1
+2. Traffic goes through WireGuard tunnel to wg0 interface (10.10.0.1) in container
+3. Container forwards traffic (IP forwarding enabled) to Docker bridge
+4. Bridge routes traffic from 10.43.43.43 to host at 10.43.43.1
+5. Host's SSH server receives the connection
+
+### SSH Access Over WireGuard
+
+**Important:** The wg-easy container runs only WireGuard and the web UI - there is NO SSH server inside the container.
+
+To SSH to the host server over the WireGuard VPN:
+
+```bash
+ssh simone@10.43.43.1
+```
+
+You must use the **host's Docker bridge IP** (`10.43.43.1`), NOT:
+- ❌ `10.10.0.1` - This is the WireGuard gateway inside the container (no SSH server)
+- ❌ `10.43.43.43` - This is the container's IP (no SSH server)
+- ✅ `10.43.43.1` - This is the host's IP on the Docker bridge network (SSH server accessible)
+
+### Split VPN Configuration
+
+The WireGuard setup uses **split tunneling** with specific AllowedIPs to avoid routing all traffic through the server. This is important because Hetzner servers have limited monthly network traffic quotas.
+
+**AllowedIPs configuration includes:**
+- `10.43.43.1/32` - Host's Docker bridge IP for SSH access
+- `10.10.0.0/24` - VPN client network
+- `fd10:10:10::/64` - IPv6 VPN network
+- DNS server IPs (e.g., AdGuard DNS) - Required for Android Private DNS to work before VPN is fully established
+
+**Note for wg-easy 15.1 users:** The `INIT_ALLOWED_IPS` variable in `.env` is not yet supported in version 15.1 (will be supported from 15.2+). You must manually configure the AllowedIPs in the wg-easy web UI when creating or editing clients.
+
+### Securing SSH Access
+
+Once WireGuard is working, you can block SSH access from the public internet and only allow it through the VPN:
+
+```bash
+# Block SSH from public internet
+sudo ufw delete allow 22/tcp
+# Allow SSH only from Docker bridge network (WireGuard clients)
+sudo ufw allow from 10.43.43.0/24 to any port 22
+```
+
+This way, SSH is only accessible via the WireGuard VPN, while the WireGuard port (51820/udp) remains open to the internet.
+
 ### Full provisioning
 
 To run all roles:
