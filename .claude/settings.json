@@ -1,0 +1,7 @@
+{
+ "permissions": {
+   "additionalDirectories": [
+     "/media/data/self_hosted/ansible-home-servers"
+   ]
+ }
+}

@@ -1,0 +1,1 @@
+- Take inspiration from the project /media/data/self_hosted/ansible-home-servers and whenever possible use the same style or just copy roles. Later I want to extract common things in a collection
