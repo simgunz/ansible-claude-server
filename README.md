@@ -29,10 +29,45 @@ Install requirements:
 ansible-galaxy install -r requirements.yml
 ```
 
-To provision run:
+### Initial provisioning
+
+First run Docker and WireGuard setup:
 
 ```bash
  export ANSIBLE_BECOME_PASS=mypassword  # Add leading space to not store in history
-./install
+./install greenfly --tags docker,wg_easy
+```
+
+### Configure WireGuard VPN
+
+1. Create SSH tunnel to access wg-easy web interface:
+
+```bash
+ssh -N -L 51821:localhost:51821 simone@<server-ip>
+```
+
+2. Open browser and navigate to `http://localhost:51821`
+
+3. Login with username `admin` and the generated password found in:
+   - Server path: `/home/simone/services/wg_easy/.env`
+   - Look for `INIT_PASSWORD=...`
+
+4. Save the password in your password manager
+
+5. Remove the `INIT_PASSWORD` variable from `/home/simone/services/wg_easy/.env` to avoid credential exposure
+
+6. Create a new WireGuard client in the web interface
+
+7. Download the configuration file or scan QR code
+
+8. Import the configuration into your WireGuard client
+
+### Full provisioning
+
+To run all roles:
+
+```bash
+ export ANSIBLE_BECOME_PASS=mypassword  # Add leading space to not store in history
+./install greenfly
 ```
 
