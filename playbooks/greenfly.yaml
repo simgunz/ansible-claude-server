@@ -7,4 +7,5 @@
     - geerlingguy.docker
     - wg_easy
     - ufw
+    - unattended_upgrades
 
