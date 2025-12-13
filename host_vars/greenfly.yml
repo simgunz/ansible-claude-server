@@ -4,19 +4,18 @@ docker_bridge_subnet: "10.43.43.0/24"
 docker_bridge_host_ip: "10.43.43.1"
 wireguard_port: "51820"
 
-wg_easy_bridge_ip: "{{ docker_bridge_ip }}"
-wg_easy_bridge_subnet: "{{ docker_bridge_subnet }}"
-wg_easy_bridge_host_ip: "{{ docker_bridge_host_ip }}"
-wg_easy_port: "{{ wireguard_port }}"
-
-ufw_wireguard_port: "{{ wireguard_port }}"
-ufw_ssh_allowed_subnet: "{{ docker_bridge_subnet }}"
-ufw_ssh_host_ip: "{{ docker_bridge_host_ip }}"
-
 adguard_dns_ipv4_primary: "94.140.14.14"
 adguard_dns_ipv4_secondary: "94.140.15.15"
 adguard_dns_ipv6_primary: "2a10:50c0::ad1:ff"
 adguard_dns_ipv6_secondary: "2a10:50c0::ad2:ff"
 
+wg_easy_bridge_ip: "{{ docker_bridge_ip }}"
+wg_easy_bridge_subnet: "{{ docker_bridge_subnet }}"
+wg_easy_bridge_host_ip: "{{ docker_bridge_host_ip }}"
+wg_easy_port: "{{ wireguard_port }}"
 wg_easy_dns: "{{ adguard_dns_ipv4_primary }},{{ adguard_dns_ipv4_secondary }},{{ adguard_dns_ipv6_primary }},{{ adguard_dns_ipv6_secondary }}"
 wg_easy_allowed_ips_extra: "{{ adguard_dns_ipv4_primary }}/32,{{ adguard_dns_ipv4_secondary }}/32,{{ adguard_dns_ipv6_primary }}/128,{{ adguard_dns_ipv6_secondary }}/128"
+
+ufw_wireguard_port: "{{ wireguard_port }}"
+ufw_ssh_allowed_subnet: "{{ docker_bridge_subnet }}"
+ufw_ssh_host_ip: "{{ docker_bridge_host_ip }}"
