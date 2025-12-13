@@ -2,5 +2,8 @@
 all:
   hosts:
     greenfly:
+      ansible_host: 10.43.43.1
+      ansible_user: simone
+    greenfly-public:
       ansible_host: 138.199.192.136
       ansible_user: simone

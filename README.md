@@ -31,11 +31,11 @@ ansible-galaxy install -r requirements.yml
 
 ### Initial provisioning
 
-First run Docker and WireGuard setup:
+First run Docker and WireGuard setup using the public IP:
 
 ```bash
  export ANSIBLE_BECOME_PASS=mypassword  # Add leading space to not store in history
-./install greenfly --tags docker,wg_easy
+./install greenfly-public --tags docker,wg_easy
 ```
 
 ### Configure WireGuard VPN
@@ -43,7 +43,7 @@ First run Docker and WireGuard setup:
 1. Create SSH tunnel to access wg-easy web interface:
 
 ```bash
-ssh -N -L 51821:localhost:51821 simone@<server-ip>
+ssh -N -L 51821:localhost:51821 simone@138.199.192.136
 ```
 
 2. Open browser and navigate to `http://localhost:51821`
@@ -66,11 +66,11 @@ ssh -N -L 51821:localhost:51821 simone@<server-ip>
 
 ### Secure SSH access
 
-Once you've verified SSH access over the VPN, restrict SSH to VPN-only:
+Once you've verified SSH access over the VPN, restrict SSH to VPN-only using the public IP one last time:
 
 ```bash
  export ANSIBLE_BECOME_PASS=mypassword  # Add leading space to not store in history
-./install greenfly --tags ufw
+./install greenfly-public --tags ufw
 ```
 
 **⚠️ WARNING:** This will block SSH access from the public internet! Only proceed after confirming:
@@ -85,12 +85,14 @@ The UFW role will:
 
 ### Deploy remaining roles
 
-After securing SSH, deploy any remaining roles in the playbook:
+After securing SSH, use the VPN IP for all future deployments:
 
 ```bash
  export ANSIBLE_BECOME_PASS=mypassword  # Add leading space to not store in history
 ./install greenfly
 ```
+
+**Note:** From now on, use `greenfly` (VPN IP: 10.43.43.1) for all Ansible operations. Only use `greenfly-public` if you need to access via the public IP (138.199.192.136).
 
 ## WireGuard Network Architecture
 
