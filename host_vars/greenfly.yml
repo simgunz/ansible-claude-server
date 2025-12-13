@@ -1,0 +1,5 @@
+---
+wg_easy_dns: "94.140.14.14,94.140.15.15,2a10:50c0::ad1:ff,2a10:50c0::ad2:ff"
+
+# Android Private DNS needs to reach DNS servers before VPN is established
+wg_easy_allowed_ips_extra: "94.140.14.14/32,94.140.15.15/32,2a10:50c0::ad1:ff/128,2a10:50c0::ad2:ff/128"

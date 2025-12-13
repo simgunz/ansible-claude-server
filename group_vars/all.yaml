@@ -1,3 +1,7 @@
+service_user: simone
+service_group: simone
+services_dir: /home/simone/services
+
 # geerlingguy.docker
 docker_users:
   - simone

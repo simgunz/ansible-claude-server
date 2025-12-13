@@ -1,0 +1,11 @@
+---
+wg_easy_version: "15.1"
+
+wg_easy_admin_username: "admin"
+# Password is generated directly in .env template
+wg_easy_host: "{{ ansible_default_ipv4.address }}"
+wg_easy_port: "51820"
+wg_easy_dns: "1.1.1.1,1.0.0.1"
+wg_easy_ipv4_cidr: "10.10.0.0/24"
+wg_easy_ipv6_cidr: "fd10:10:10::/64"
+wg_easy_allowed_ips_extra: ""

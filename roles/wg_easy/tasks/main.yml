@@ -1,0 +1,34 @@
+---
+- name: Create service directory
+  ansible.builtin.file:
+    path: "{{ services_dir }}/wg_easy"
+    state: directory
+    owner: "{{ service_user }}"
+    group: "{{ service_group }}"
+    mode: "0755"
+  tags: wg_easy
+
+- name: Template compose.yaml
+  ansible.builtin.template:
+    src: compose.yaml.jinja
+    dest: "{{ services_dir }}/wg_easy/compose.yaml"
+    owner: "{{ service_user }}"
+    group: "{{ service_group }}"
+    mode: "0644"
+  tags: wg_easy
+
+- name: Template .env file (first time only)
+  ansible.builtin.template:
+    src: .env.jinja
+    dest: "{{ services_dir }}/wg_easy/.env"
+    owner: "{{ service_user }}"
+    group: "{{ service_group }}"
+    mode: "0600"
+    force: false
+  tags: wg_easy
+
+- name: Start wg-easy service
+  community.docker.docker_compose_v2:
+    project_src: "{{ services_dir }}/wg_easy"
+    state: present
+  tags: wg_easy

@@ -5,4 +5,5 @@
   roles:
     - server_essentials
     - geerlingguy.docker
+    - wg_easy
 
