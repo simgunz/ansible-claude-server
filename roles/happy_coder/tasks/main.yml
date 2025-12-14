@@ -1,0 +1,7 @@
+---
+- name: Install happy-coder npm package
+  community.general.npm:
+    name: happy-coder
+    global: "{{ happy_coder_global }}"
+    state: present
+  tags: happy_coder

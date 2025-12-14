@@ -5,6 +5,7 @@
   roles:
     - server_essentials
     - nodejs
+    - happy_coder
     - geerlingguy.docker
     - wg_easy
     - ssh_hardening
