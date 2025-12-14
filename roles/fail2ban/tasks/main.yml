@@ -1,0 +1,23 @@
+---
+- name: Install fail2ban
+  ansible.builtin.package:
+    name: fail2ban
+    state: present
+  tags: fail2ban
+
+- name: Configure fail2ban to log to systemd journal
+  ansible.builtin.template:
+    src: fail2ban.local.jinja
+    dest: /etc/fail2ban/fail2ban.d/systemd-journal.conf
+    owner: root
+    group: root
+    mode: "0644"
+  notify: reload fail2ban
+  tags: fail2ban
+
+- name: Ensure fail2ban is running and enabled on boot
+  ansible.builtin.service:
+    name: fail2ban
+    state: started
+    enabled: true
+  tags: fail2ban

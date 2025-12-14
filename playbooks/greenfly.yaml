@@ -7,5 +7,6 @@
     - geerlingguy.docker
     - wg_easy
     - ufw
+    - fail2ban
     - unattended_upgrades
 
