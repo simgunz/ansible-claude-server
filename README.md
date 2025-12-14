@@ -31,19 +31,19 @@ ansible-galaxy install -r requirements.yml
 
 ### Initial provisioning
 
-First run Docker and WireGuard setup using the public IP:
+First run Docker and WireGuard setup using the public IP on port 22 (before SSH hardening):
 
 ```bash
  export ANSIBLE_BECOME_PASS=mypassword  # Add leading space to not store in history
-./install greenfly-public --tags docker,wg_easy
+./install greenfly-public -e ansible_port=22 --tags docker,wg_easy
 ```
 
 ### Configure WireGuard VPN
 
-1. Create SSH tunnel to access wg-easy web interface:
+1. Create SSH tunnel to access wg-easy web interface (still on port 22):
 
 ```bash
-ssh -N -L 51821:localhost:51821 simone@138.199.192.136
+ssh -p 22 -N -L 51821:localhost:51821 simone@138.199.192.136
 ```
 
 2. Open browser and navigate to `http://localhost:51821`
@@ -64,35 +64,50 @@ ssh -N -L 51821:localhost:51821 simone@138.199.192.136
 
 9. Import the configuration into your WireGuard client
 
-### Secure SSH access
+### Harden SSH
 
-Once you've verified SSH access over the VPN, restrict SSH to VPN-only using the public IP one last time:
+Once you've verified SSH access over the VPN, harden SSH configuration using the public IP (still on port 22):
 
 ```bash
  export ANSIBLE_BECOME_PASS=mypassword  # Add leading space to not store in history
-./install greenfly-public --tags ufw
+./install greenfly-public -e ansible_port=22 --tags ssh_hardening
+```
+
+This changes SSH port from 22 to 5951. After this completes, verify you can connect on the new port over VPN:
+
+```bash
+ssh -p 5951 simone@10.43.43.1
+```
+
+### Secure SSH access
+
+Once you've verified SSH works on port 5951 over the VPN, restrict SSH to VPN-only:
+
+```bash
+ export ANSIBLE_BECOME_PASS=mypassword  # Add leading space to not store in history
+./install greenfly-public --tags ufw,fail2ban
 ```
 
 **⚠️ WARNING:** This will block SSH access from the public internet! Only proceed after confirming:
 1. WireGuard VPN is working
-2. You can SSH to `10.43.43.1` over the VPN
+2. You can SSH to `10.43.43.1:5951` over the VPN
 3. You have tested VPN connectivity
 
 The UFW role will:
 - Allow WireGuard port (51820/udp) from the internet
-- Allow SSH (22/tcp) only from the Docker bridge network (WireGuard clients)
+- Allow SSH (5951/tcp) only from the Docker bridge network (WireGuard clients)
 - Deny all other incoming traffic
 
 ### Deploy remaining roles
 
-After securing SSH, use the VPN IP for all future deployments:
+After securing SSH, use the VPN IP with the new port for all future deployments:
 
 ```bash
  export ANSIBLE_BECOME_PASS=mypassword  # Add leading space to not store in history
 ./install greenfly
 ```
 
-**Note:** From now on, use `greenfly` (VPN IP: 10.43.43.1) for all Ansible operations. Only use `greenfly-public` if you need to access via the public IP (138.199.192.136).
+**Note:** From now on, use `greenfly` (VPN IP: 10.43.43.1:5951) for all Ansible operations. To connect manually: `ssh -p 5951 simone@10.43.43.1`
 
 ## WireGuard Network Architecture
 
@@ -118,7 +133,7 @@ graph LR
             WG["WireGuard<br/>10.10.0.1"]
         end
         Bridge["Docker Bridge<br/>10.43.43.1 (host)<br/>10.43.43.43 (container)"]
-        SSH["SSH Server<br/>10.43.43.1:22"]
+        SSH["SSH Server<br/>10.43.43.1:5951"]
     end
 
     Client <--"Tunnel :51820/udp"--> WG
@@ -144,7 +159,7 @@ graph LR
 To SSH to the host server over the WireGuard VPN:
 
 ```bash
-ssh simone@10.43.43.1
+ssh -p 5951 simone@10.43.43.1
 ```
 
 You must use the **host's Docker bridge IP** (`10.43.43.1`), NOT:
