@@ -4,9 +4,9 @@
   become: true
   roles:
     - server_essentials
-    - ssh_hardening
     - geerlingguy.docker
     - wg_easy
+    - ssh_hardening
     - ufw
     - fail2ban
     - unattended_upgrades
