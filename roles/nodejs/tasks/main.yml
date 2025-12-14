@@ -1,7 +1,9 @@
 ---
 - name: Install Node.js and npm
   ansible.builtin.package:
-    name: "{{ nodejs_packages }}"
+    name:
+      - nodejs
+      - npm
     state: present
     update_cache: true
     cache_valid_time: 86400
