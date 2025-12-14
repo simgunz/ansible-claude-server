@@ -33,7 +33,7 @@
 - name: Allow SSH only from Docker bridge network (WireGuard clients)
   community.general.ufw:
     rule: allow
-    port: '22'
+    port: "{{ ufw_ssh_port }}"
     proto: tcp
     from_ip: "{{ ufw_ssh_allowed_subnet }}"
   tags: ufw

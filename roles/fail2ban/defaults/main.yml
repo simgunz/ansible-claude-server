@@ -1,0 +1,2 @@
+---
+fail2ban_ssh_port: "22"
