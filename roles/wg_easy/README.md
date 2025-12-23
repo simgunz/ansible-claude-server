@@ -96,7 +96,12 @@ The `INIT_ALLOWED_IPS` setting controls which networks are routed through the VP
 2. **Server access** (if `wg_easy_allow_server_access: true`):
    - `{{ ansible_host }}/32` - The server's IP from Ansible inventory
 
-3. **Additional networks** (if `wg_easy_allowed_ips_extra` is set):
+3. **DNS servers** (always included):
+   - Automatically extracts IPs from `wg_easy_dns` and adds to allowed IPs
+   - Prevents DNS leaks in split tunnel configurations
+   - No manual duplication needed
+
+4. **Additional networks** (if `wg_easy_allowed_ips_extra` is set):
    - User-defined subnets or IPs
 
 ### Split Tunneling vs Full Tunneling
@@ -125,14 +130,15 @@ Access entire home LAN and DNS servers over VPN:
 # host_vars/housefly.yaml
 wg_easy_host: "home.example.com"
 wg_easy_port: "51820"
+wg_easy_dns: "8.8.8.8,8.8.4.4"
 wg_easy_allow_server_access: false  # Home LAN subnet already includes server
-wg_easy_allowed_ips_extra: "192.168.1.0/24,8.8.8.8/32,8.8.4.4/32"
+wg_easy_allowed_ips_extra: "192.168.1.0/24"
 ```
 
 **Result:** VPN clients can access:
 - `10.8.0.0/24` - Other VPN clients
 - `192.168.1.0/24` - Home network devices (including server at `192.168.1.100`)
-- `8.8.8.8`, `8.8.4.4` - Specific DNS servers
+- `8.8.8.8`, `8.8.4.4` - DNS servers (automatically added from wg_easy_dns)
 
 #### Public Server Deployment
 
