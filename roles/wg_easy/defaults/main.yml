@@ -1,12 +1,10 @@
 ---
 wg_easy_version: "15.1"
 wg_easy_admin_username: "admin"
-wg_easy_host: "{{ ansible_default_ipv4.address }}"
+wg_easy_host: "" # Must be set in host_vars (public hostname/IP for VPN endpoint)
 wg_easy_port: "51820"
 wg_easy_dns: "1.1.1.1,1.0.0.1"
-wg_easy_ipv4_cidr: "10.10.0.0/24"
-wg_easy_ipv6_cidr: "fd10:10:10::/64"
-wg_easy_allowed_ips_extra: ""
-wg_easy_bridge_ip: "10.42.42.42"
-wg_easy_bridge_subnet: "10.42.42.0/24"
-wg_easy_bridge_host_ip: "10.42.42.1"
+wg_easy_client_ipv4_cidr: "10.8.0.0/24" # VPN client IP range (change if running multiple VPNs)
+wg_easy_client_ipv6_cidr: "fd08:8:8::/64"
+wg_easy_allow_server_access: true # Allow SSH to server (ansible_host) over VPN
+wg_easy_allowed_ips_extra: "" # Additional networks/IPs accessible via VPN (e.g., "192.168.77.0/24")

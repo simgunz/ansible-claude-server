@@ -13,13 +13,13 @@ services:
       - .env
     networks:
       wg:
-        ipv4_address: {{ wg_easy_bridge_ip }}
+        ipv4_address: 10.42.42.42
         ipv6_address: fdcc:ad94:bacf:61a3::2a
     volumes:
       - etc_wg_easy:/etc/wireguard
       - /lib/modules:/lib/modules:ro
     ports:
-      - "51820:51820/udp"
+      - "{{ wg_easy_port }}:{{ wg_easy_port }}/udp"
       - "127.0.0.1:51821:51821/tcp"
     restart: unless-stopped
     cap_add:
@@ -39,5 +39,5 @@ networks:
     ipam:
       driver: default
       config:
-        - subnet: {{ wg_easy_bridge_subnet }}
+        - subnet: 10.42.42.0/24
         - subnet: fdcc:ad94:bacf:61a3::/64
