@@ -8,3 +8,5 @@ server_essentials_packages:
   - dnsutils # dig
   - curl
   - inxi
+  - build-essential
+  - python3
