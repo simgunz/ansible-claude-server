@@ -75,3 +75,17 @@ role_specific_variable: "{{ base_variable }}"
 Dual host entries for same physical server:
 - `{hostname}-public`: Public IP for initial provisioning
 - `{hostname}`: VPN IP for normal operations after SSH lockdown
+
+## Issue Tracking
+
+This project uses **ticket (tk)** for issue tracking. Run `tk help` when you need to use it.
+
+**Quick reference:**
+- `tk create [title] -d "description" -t task -p 2` - Create ticket
+- `tk ls` - List all tickets
+- `tk ready` - Show unblocked tickets
+- `tk start <id>` - Start working on a ticket
+- `tk close <id>` - Close completed ticket
+- `tk dep <id> <dep-id>` - Add dependency between tickets
+
+Tickets are stored as markdown files in `.tickets/` directory.
