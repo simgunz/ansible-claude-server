@@ -89,3 +89,7 @@ This project uses **ticket (tk)** for issue tracking. Run `tk help` when you nee
 - `tk dep <id> <dep-id>` - Add dependency between tickets
 
 Tickets are stored as markdown files in `.tickets/` directory.
+
+## Activity Tracking
+
+Project progress is tracked in `/media/data/zettelkasten/Workbench/Claude code dev server/Claude code remote dev server.md` (update with session progress)
