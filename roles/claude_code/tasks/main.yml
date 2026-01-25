@@ -1,0 +1,33 @@
+---
+- name: Ensure curl is installed
+  ansible.builtin.package:
+    name: curl
+    state: present
+  become: true
+  tags: claude_code
+
+- name: Check if Claude Code is already installed
+  ansible.builtin.stat:
+    path: "/home/{{ claude_code_user }}/.local/bin/claude"
+  register: claude_code_binary
+  tags: claude_code
+
+- name: Install Claude Code
+  ansible.builtin.shell:
+    cmd: curl -fsSL https://claude.ai/install.sh | bash -s {{ claude_code_channel }}
+  become: true
+  become_user: "{{ claude_code_user }}"
+  when: not claude_code_binary.stat.exists
+  changed_when: true
+  tags: claude_code
+
+- name: Configure auto-updater setting
+  ansible.builtin.lineinfile:
+    path: "/home/{{ claude_code_user }}/.bashrc"
+    line: "export DISABLE_AUTOUPDATER=1"
+    state: "{{ 'present' if claude_code_disable_autoupdater else 'absent' }}"
+    create: false
+  become: true
+  become_user: "{{ claude_code_user }}"
+  when: claude_code_disable_autoupdater
+  tags: claude_code

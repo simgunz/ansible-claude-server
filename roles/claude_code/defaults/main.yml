@@ -1,0 +1,9 @@
+---
+# User to install Claude Code for (installs to ~/.local/bin/claude)
+claude_code_user: "{{ service_user }}"
+
+# Release channel: "latest" (default) or "stable" (one week behind, fewer regressions)
+claude_code_channel: stable
+
+# Disable auto-updates (set to true to disable)
+claude_code_disable_autoupdater: false
