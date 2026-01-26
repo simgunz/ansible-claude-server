@@ -24,3 +24,12 @@
   become: true
   become_user: "{{ service_user }}"
   tags: git
+
+- name: Configure git credential helper
+  community.general.git_config:
+    name: credential.helper
+    value: store
+    scope: global
+  become: true
+  become_user: "{{ service_user }}"
+  tags: git
