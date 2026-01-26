@@ -93,3 +93,8 @@ Tickets are stored as markdown files in `.tickets/` directory.
 ## Activity Tracking
 
 Project progress is tracked in `/media/data/zettelkasten/Workbench/Claude code dev server/Claude code remote dev server.md` (update with session progress)
+
+**Log entry guidelines:**
+- Be concise - skip trivial/obvious steps
+- Capture non-obvious information that's hard to remember or figure out again
+- For first-time processes, include enough detail to reproduce (commands, file locations, the "how")
