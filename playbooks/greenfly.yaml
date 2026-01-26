@@ -4,6 +4,7 @@
   become: true
   roles:
     - server_essentials
+    - git
     - claude_code
     - nodejs
     - happy_coder
