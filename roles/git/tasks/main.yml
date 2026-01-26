@@ -1,7 +1,9 @@
 ---
-- name: Install git
+- name: Install git and gh
   ansible.builtin.package:
-    name: git
+    name:
+      - git
+      - gh
     state: present
   tags: git
 
