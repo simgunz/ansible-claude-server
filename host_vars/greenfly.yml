@@ -34,3 +34,4 @@ claude_code_mcp_servers:
 
 claude_code_plugins:
   - name: playwright
+  - name: typescript-lsp

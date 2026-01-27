@@ -1,1 +1,5 @@
-{{ claude_code_settings | to_nice_json }}
+{% set plugins_dict = {} %}
+{% for plugin in claude_code_plugins %}
+{% set _ = plugins_dict.update({(plugin.name ~ '@' ~ (plugin.marketplace | default('claude-plugins-official'))): true}) %}
+{% endfor %}
+{{ claude_code_settings | combine({"enabledPlugins": plugins_dict} if plugins_dict else {}) | to_nice_json }}
