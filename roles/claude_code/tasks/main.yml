@@ -81,3 +81,17 @@
     - item.name not in (claude_mcp_list.stdout | default(''))
   no_log: true
   tags: claude_code
+
+- name: Install plugins
+  ansible.builtin.command:
+    cmd: >-
+      /home/{{ claude_code_user }}/.local/bin/claude plugin install
+      --scope {{ item.scope | default('user') }}
+      {{ item.name }}
+  become: true
+  become_user: "{{ claude_code_user }}"
+  loop: "{{ claude_code_plugins }}"
+  loop_control:
+    label: "{{ item.name }}"
+  changed_when: false
+  tags: claude_code

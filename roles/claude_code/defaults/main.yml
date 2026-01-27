@@ -26,3 +26,8 @@ claude_code_mcp_servers: []
 #      - "@upstash/context7-mcp"
 #      - "--api-key"
 #      - "{{ context7_api_key }}"
+
+# Plugins to install via `claude plugin install`
+# Each entry: { name, scope (default: user) }
+claude_code_plugins: []
+#  - name: playwright

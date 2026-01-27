@@ -31,7 +31,6 @@ claude_code_mcp_servers:
       - "@upstash/context7-mcp"
       - "--api-key"
       - "{{ context7_api_key }}"
+
+claude_code_plugins:
   - name: playwright
-    command: npx
-    args:
-      - "@playwright/mcp@latest"
