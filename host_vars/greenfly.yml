@@ -23,15 +23,7 @@ fail2ban_ssh_port: "{{ ssh_port }}"
 vibetunnel_host: "{{ docker_bridge_host_ip }}"
 vibetunnel_port: "4020"
 
-claude_code_mcp_servers:
-  - name: context7
-    command: npx
-    args:
-      - "-y"
-      - "@upstash/context7-mcp"
-      - "--api-key"
-      - "{{ context7_api_key }}"
-
 claude_code_plugins:
+  - name: context7
   - name: playwright
   - name: typescript-lsp
