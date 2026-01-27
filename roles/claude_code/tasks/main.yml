@@ -31,3 +31,53 @@
   become_user: "{{ claude_code_user }}"
   when: claude_code_disable_autoupdater
   tags: claude_code
+
+- name: Ensure Claude Code config directory exists
+  ansible.builtin.file:
+    path: "/home/{{ claude_code_user }}/.claude"
+    state: directory
+    owner: "{{ claude_code_user }}"
+    group: "{{ claude_code_user }}"
+    mode: "0755"
+  become: true
+  tags: claude_code
+
+- name: Deploy Claude Code settings
+  ansible.builtin.template:
+    src: settings.json.jinja
+    dest: "/home/{{ claude_code_user }}/.claude/settings.json"
+    owner: "{{ claude_code_user }}"
+    group: "{{ claude_code_user }}"
+    mode: "0644"
+  become: true
+  tags: claude_code
+
+- name: Check installed MCP servers
+  ansible.builtin.command:
+    cmd: "/home/{{ claude_code_user }}/.local/bin/claude mcp list"
+  become: true
+  become_user: "{{ claude_code_user }}"
+  register: claude_mcp_list
+  changed_when: false
+  when: claude_code_mcp_servers | length > 0
+  tags: claude_code
+
+- name: Add MCP servers
+  ansible.builtin.command:
+    cmd: >-
+      /home/{{ claude_code_user }}/.local/bin/claude mcp add
+      --scope {{ item.scope | default('user') }}
+      {{ item.name }}
+      --
+      {{ item.command }}
+      {{ item.args | join(' ') }}
+  become: true
+  become_user: "{{ claude_code_user }}"
+  loop: "{{ claude_code_mcp_servers }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when:
+    - claude_code_mcp_servers | length > 0
+    - item.name not in (claude_mcp_list.stdout | default(''))
+  no_log: true
+  tags: claude_code

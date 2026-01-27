@@ -7,3 +7,21 @@ claude_code_channel: stable
 
 # Disable auto-updates (set to true to disable)
 claude_code_disable_autoupdater: false
+
+# Claude Code settings (~/.claude/settings.json)
+claude_code_settings:
+  autoUpdatesChannel: "stable"
+  permissions:
+    allow:
+      - "mcp__context7__resolve-library-id"
+
+# MCP servers to register via `claude mcp add`
+# Each entry: { name, command, args (list), scope (default: user) }
+claude_code_mcp_servers: []
+#  - name: context7
+#    command: npx
+#    args:
+#      - "-y"
+#      - "@upstash/context7-mcp"
+#      - "--api-key"
+#      - "{{ context7_api_key }}"

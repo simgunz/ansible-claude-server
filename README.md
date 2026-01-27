@@ -29,6 +29,20 @@ Install requirements:
 ansible-galaxy install -r requirements.yml
 ```
 
+### Secrets
+
+Secrets (API keys, etc.) are stored encrypted in `group_vars/all/vault.yaml.enc`. Decrypt once after cloning:
+
+```bash
+ansible-vault decrypt --output group_vars/all/vault.yaml group_vars/all/vault.yaml.enc
+```
+
+The decrypted `vault.yaml` is gitignored. To update secrets, edit `vault.yaml` directly and re-encrypt:
+
+```bash
+ansible-vault encrypt --output group_vars/all/vault.yaml.enc group_vars/all/vault.yaml
+```
+
 ### Initial provisioning
 
 First run Docker and WireGuard setup using the public IP on port 22 (before SSH hardening):

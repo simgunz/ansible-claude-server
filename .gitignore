@@ -2,3 +2,6 @@
 *.retry
 .ansible/
 
+### Secrets (decrypted vault)
+group_vars/all/vault.yaml
+
