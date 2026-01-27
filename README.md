@@ -31,17 +31,13 @@ ansible-galaxy install -r requirements.yml
 
 ### Secrets
 
-Secrets (API keys, etc.) are stored encrypted in `group_vars/all/vault.yaml.enc`. Decrypt once after cloning:
+Secrets are stored encrypted in `group_vars/all/vault.yaml.enc`. Decrypt once after cloning:
 
 ```bash
-ansible-vault decrypt --output group_vars/all/vault.yaml group_vars/all/vault.yaml.enc
+just vault-decrypt
 ```
 
-The decrypted `vault.yaml` is gitignored. To update secrets, edit `vault.yaml` directly and re-encrypt:
-
-```bash
-ansible-vault encrypt --output group_vars/all/vault.yaml.enc group_vars/all/vault.yaml
-```
+The decrypted `vault.yaml` is gitignored. After editing secrets, re-encrypt with `just vault-encrypt`.
 
 ### Initial provisioning
 
